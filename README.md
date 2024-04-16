@@ -1,4 +1,4 @@
-# DataScientist with R
+# Data Visualization with R
 Data visualization examples
 
 Exploratory analysis of the age distribution with correspondent group and age interaction using ggplot2
