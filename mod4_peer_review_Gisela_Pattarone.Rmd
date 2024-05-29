@@ -1,0 +1,122 @@
+---
+title: "Data Analysis"
+author: "Gisela Pattarone"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Loading and Transformation
+
+```{r load-data}
+# Load necessary libraries
+library(tidyverse)
+library(lubridate)
+
+# Read the data
+data <- read.csv("/home/zs-gip/R/ORKik/GEO_isoforms/mod4_peer_rev_data.csv")
+
+# Transform columns
+data <- data %>%
+  mutate(Date = mdy(Date),
+         CustomerCode = as.character(CustomerCode),
+         Department = as.factor(Department),
+         Category = as.factor(Category))
+
+# Display the transformed data structure
+str(data)
+```
+
+## Summaries of Quantity and Price Columns
+
+```{r summary-stats}
+# Summary for Quantity and Price
+summary(data$Quantity)
+summary(data$Price)
+```
+
+**Interpretation:** The summary statistics for the Quantity column show the minimum, first quartile, median, mean, third quartile, and maximum values. Similarly, the Price column summary shows these same statistics for price. These summaries give a sense of the central tendency and variability in the data.
+
+## Count of NA Values in Each Column
+
+```{r na-count}
+# Count of NA values in each column
+na_counts <- colSums(is.na(data))
+na_counts
+```
+
+## Bar Chart for Category Column
+
+```{r bar-chart-category}
+# Bar chart for Category column
+ggplot(data, aes(x = Category)) +
+  geom_bar() +
+  ggtitle("Frequency of Each Category") +
+  xlab("Category") +
+  ylab("Frequency")
+```
+
+## Departments and Their Revenue
+
+```{r bar-chart-revenue}
+# Create a new column for Revenue
+data <- data %>%
+  mutate(Revenue = Price * Quantity)
+
+# Bar chart for Departments and their revenue
+ggplot(data, aes(x = reorder(Department, Revenue, sum), y = Revenue, fill = Department)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Departments and Their Revenue") +
+  xlab("Department") +
+  ylab("Total Revenue") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Univariate Plots for Price and Quantity
+
+```{r univariate-plots}
+# Box plot of the Price column
+ggplot(data, aes(y = Price)) +
+  geom_boxplot() +
+  ggtitle("Box Plot of Price") +
+  ylab("Price")
+
+# Histogram of the Price column
+ggplot(data, aes(x = Price)) +
+  geom_histogram(binwidth = 5) +
+  ggtitle("Histogram of Price") +
+  xlab("Price") +
+  ylab("Frequency")
+
+# Box plot of the Quantity column
+ggplot(data, aes(y = Quantity)) +
+  geom_boxplot() +
+  ggtitle("Box Plot of Quantity") +
+  ylab("Quantity")
+
+# Histogram of the Quantity column
+ggplot(data, aes(x = Quantity)) +
+  geom_histogram(binwidth = 1) +
+  ggtitle("Histogram of Quantity") +
+  xlab("Quantity") +
+  ylab("Frequency")
+```
+
+## Comparison of Power BI, Alteryx, and R
+
+Power BI, Alteryx, and R each have strengths and weaknesses for data analysis. Power BI is renowned for its ease of use and excellent data visualization capabilities. It allows users to create interactive dashboards with minimal coding knowledge, making it accessible for non-programmers. It also integrates well with various data sources and provides robust sharing options. However, it can be costly, especially for large organizations, and its capabilities for advanced statistical analysis are limited compared to R.
+
+Alteryx is another powerful tool that provides a user-friendly interface for data preparation, blending, and advanced analytics. It excels in automation and workflow management, allowing users to build repeatable processes. Like Power BI, Alteryx is relatively easy to use but can be expensive. Its sharing capabilities are strong, and it is scalable to handle large datasets. However, it may not be as flexible as R for custom statistical analysis.
+
+R, on the other hand, is an open-source programming language that provides unparalleled flexibility and control over data analysis and visualization. It is highly customizable and supports complex statistical modeling and machine learning. While R requires programming skills, which can be a barrier for some users, it is cost-effective and has a vast community that contributes to an extensive library of packages. The replicability of analyses in R is excellent, as scripts can be shared and rerun easily. However, sharing results with non-technical stakeholders can be challenging without the use of additional tools or applications.
+
+Overall, Power BI and Alteryx offer ease of use and strong sharing capabilities at a higher cost, while R provides comprehensive analytical power and flexibility at a lower cost but requires programming expertise.
+
+## Conclusion
+
+This report demonstrated the process of loading, transforming, and analyzing data using R. It included generating summary statistics, handling missing values, creating visualizations, and comparing data analysis tools.
+
+```
